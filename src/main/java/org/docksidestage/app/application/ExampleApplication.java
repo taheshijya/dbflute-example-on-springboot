@@ -21,13 +21,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * @author jflute
  */
 @Configuration
-@EnableWebMvc
 @EnableAutoConfiguration
 @ComponentScan("org.docksidestage.app")
 @Import(DBFluteBeansJavaConfig.class)

@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Spring Boot test</title>
+<meta charset="UTF-8" />
+<link href="/css/sampleCss.css" th:href="@{/css/sampleCss.css}" rel="stylesheet"></link>
+<script src="/js/sampleJs.js" th:src="@{/js/sampleJs.js}"></script>
+</head>
+
 <body>
 <form action="#" th:action="@{/login}" th:object="${loginForm}" method="POST">
 	<!-- show error per 'p' tag -->

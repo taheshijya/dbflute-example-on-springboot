@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,19 +27,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //private UserDetailsService userDetailService;
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        // セキュリティ設定を無視するリクエスト設定
+        // 静的リソース(images、css、javascript)に対するアクセスはセキュリティ設定を無視する
+        web.ignoring().antMatchers("/images/**", "/css/**", "/js/**", "/webjars/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         // #for_now for test, enable later by jflute
-        http.authorizeRequests()
+
+        // 認可の設定
+        http.authorizeRequests().antMatchers("/", "/index").permitAll() // indexは全ユーザーアクセス許可
                 .antMatchers("/login", "/register")
-                .permitAll()
-                .antMatchers("/css/**", "/js/**", "/images/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/login")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
+                .authenticated(); // それ以外は全て認証無しの場合アクセス不許可
+
+        http.formLogin()
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/member/list")
                 .failureUrl("/login")
