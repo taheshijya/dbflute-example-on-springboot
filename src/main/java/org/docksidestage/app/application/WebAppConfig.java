@@ -26,9 +26,8 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) { // for logging
-        registry.addInterceptor(new GodHandableInterceptor())
-                .excludePathPatterns("/images/**", "/css/**", "/js/**", "/webjars/**")
-                .addPathPatterns("/**");
+        registry.addInterceptor(new GodHandableInterceptor()).addPathPatterns("/**").excludePathPatterns("/static/**");
+        //.excludePathPatterns("/static/**", "/images/**", "/css/**", "/js/**", "/webjars/**");
     }
 
     @Override

@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         // セキュリティ設定を無視するリクエスト設定
         // 静的リソース(images、css、javascript)に対するアクセスはセキュリティ設定を無視する
-        web.ignoring().antMatchers("/images/**", "/css/**", "/js/**", "/webjars/**");
+        web.ignoring().antMatchers("/static/**", "/images/**", "/css/**", "/js/**", "/webjars/**");
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailService).passwordEncoder(new StandardPasswordEncoder()); // 既存のsampleプロジェクトに合わせる
-        // 既存のsampleプロジェクトとはencode後の値が異なる。ser⇒5279bf7d2b9b3e8bccae7c1d8bb9a98577b78fd7dcbc8fa4fab72b72a54bf87318bc4453ca219bce
+        // 既存のsampleプロジェクトとはencode後の値が異なる。sea⇒5279bf7d2b9b3e8bccae7c1d8bb9a98577b78fd7dcbc8fa4fab72b72a54bf87318bc4453ca219bce
         //auth.userDetailsService(userDetailService).passwordEncoder(new PlaintextPasswordEncoder());
 
     }
