@@ -20,8 +20,11 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.docksidestage.app.application.security.MemberUserDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -39,6 +42,19 @@ public class GodHandableInterceptor extends HandlerInterceptorAdapter {
         if (logger.isDebugEnabled()) {
             logger.debug("#flow ...Beginning #controller " + buildActionDisp(handlerMethod));
         }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        HeaderBean headerBean = null;
+        if (principal instanceof UserDetails) {
+            //String username = ((UserDetails) principal).getUsername();
+            headerBean = new HeaderBean((MemberUserDetail) principal);
+        } else {
+            //String username = principal.toString();
+            headerBean = HeaderBean.empty();
+        }
+        request.getSession().setAttribute("headerBean", headerBean);
+
         return super.preHandle(request, response, handler);
     }
 
