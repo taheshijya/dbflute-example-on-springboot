@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:la="http://dbflute.org/lastaflute">
 <head>
-<!--/*/ <th:block th:include="/common/layout :: head (title=#{labels.signin.title})"> /*/-->
+<!--/*/ <th:block th:include="/common/layout :: head (title='My Page')"> /*/-->
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="../../../css/reset.css" />
 	<link rel="stylesheet" type="text/css" href="../../../css/common.css" />
@@ -10,9 +10,7 @@
 <!--/*/ </th:block> /*/-->
 <!--/* individual Css write to after */-->
 </head>
-
 <body>
-
 <header th:replace="/common/layout :: header">
 	<section class="nav-main cf">
 		<div class="wrap">
@@ -36,39 +34,51 @@
 </header>
 <main>
 <div class="contents">
-	<h2 class="content-title" th:text="#{labels.signin.title}">labels.signin.title</h2>
-	<section class="sign-in-box">
-
-
-		<form class="signin-form"  action="#" th:action="@{/login}" th:object="${loginForm}" method="POST">
-			<!-- show error per 'p' tag -->
-			<div th:if="${#fields.hasErrors('*')}">
-			    <p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
-			</div>
-			<!-- line separator -->
-			<p th:if="${#fields.hasErrors('all')}" th:errors="*{all}">Incorrect date</p>
-
-			<ul>
-				<li>
-					<span th:text="#{labels.account}">labels.account</span>
-					<input type="text" name="memberAccount" th:value="${memberAccount}" th:placeholder="#{labels.signin.input.account}"/>
-					<span la:errors="account"></span>
-				</li>
-				<li>
-					<span th:text="#{labels.password}">labels.password</span>
-					<input type="password" name="password" th:value="${password}" th:placeholder="#{labels.signin.input.password}"/>
-					<span la:errors="password"></span>
-				</li>
-				<li>
-					<input type="submit" name="signin" th:value="#{labels.signin.button}" value="labels.signin.button"/>
-				</li>
-			</ul>
-		</form>
-
+	<h2 class="content-title">My Page</h2>
+	<section class="mypage-product-box">
+		<ul>
+			<li>
+				<h3>Recent Products</h3>
+				<table class="list-tbl">
+					<thead>
+						<tr>
+							<th>ProductName</th>
+							<th>RegularPrice</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="product : ${recentProducts}">
+							<td th:text="${product.productName}"></td>
+							<td th:text="${product.regularPrice}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+			<li>
+				<h3>High-Price Products</h3>
+				<table class="list-tbl">
+					<thead>
+						<tr>
+							<th>ProductName</th>
+							<th>RegularPrice</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="product : ${highPriceProducts}">
+							<td th:text="${product.productName}"></td>
+							<td th:text="${product.regularPrice}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+		</ul>
+	</section>
+	<section class="mypage-following-box">
+		<h3>Your Following</h3>
+		making now
 	</section>
 </div>
 </main>
-
 <footer th:replace="/common/layout :: footer">
 	<div class="wrap">
 		<ul class="footer-link">
@@ -84,6 +94,5 @@
 <script src="../../../js/common.js" ></script>
 <!--/*/ </th:block> /*/-->
 <!--/* individual Script write to after */-->
-
 </body>
 </html>
