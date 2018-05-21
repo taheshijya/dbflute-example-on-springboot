@@ -36,9 +36,10 @@
 </header>
 
 <div class="contents">
-	<h2>Member List</h2>
-	<div class="condition">
-		<form action="#" th:action="@{/member/list/}" th:object="${memberSearchForm}" method="get">
+	<h2 class="content-title">List of Member</h2>
+	<section class="member-search-box">
+		<h3 class="content-title-second">Search Condition</h3>
+		<form  class="member-search-form"  action="#" th:action="@{/member/list/}" th:object="${memberSearchForm}" method="get">
 			<!-- show error per 'p' tag -->
 			<div th:if="${#fields.hasErrors('*')}">
 			    <p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
@@ -47,23 +48,25 @@
 				<tr>
 					<td><label>Member Name</label></td>
 					<td><input type="text" name="memberName" th:value="*{memberName}" /></td>
+					<td th:if="${#fields.hasErrors('memberName')}" th:errors="*{memberName}" style="color: red"></td>
 				</tr>
 				<tr>
 					<td><label>Purchased Product</label></td>
 					<td><input type="text" name="purchaseProductName" th:value="*{purchaseProductName}" /></td>
+					<td th:if="${#fields.hasErrors('purchaseProductName')}" th:errors="*{purchaseProductName}" style="color: red"></td>
 				</tr>
-				<!--
+				<!-- -->
 				<tr>
 					<td><label>Member Status</label></td>
 					<td>
-						<html:select property="memberStatus">
-							<c:forEach var="status" items="${memberStatusMap}">
-								<html:option value="${f:h(status.key)}">${f:h(status.value)}</html:option>
-							</c:forEach>
-						</html:select>
+						<select class="form-control" id="memberStatus" name="memberStatus"  th:value="*{memberStatus}">
+							<option value="">---</option>
+							<option th:each="item : ${memberStatusSelectOption}" th:value="${item.key}" th:text="${item.value}" th:selected="${item.key} == *{memberStatus}">pulldown</option>
+						</select>
 					</td>
+					<td th:if="${#fields.hasErrors('memberStatus')}" th:errors="*{memberStatus}" style="color: red"></td>
 				</tr>
-				 -->
+
 				<tr>
 					<td><label>Has Unpaid</label></td>
 					<td><input type="checkbox" name="unpaid" th:value="*{unpaid}" /></td>
@@ -76,42 +79,46 @@
 			</table>
 			<input type="submit" value="Search" />
 		</form>
-	</div>
-	<hr />
-	<a href="@{/member/add/}">新規登録</a>
-	<table>
-		<thead>
-			<tr>
-				<th>Member ID</th>
-				<th>Member Name</th>
-				<th>Member Status</th>
-				<th>Formalized Date</th>
-				<th>Update Date</th>
-				<th>Edit</th>
-				<th>Purchase History</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="bean : ${beans}">
-				<td th:text="${bean.memberId}">99</td>
-				<td th:text="${bean.memberName}">jflute</td>
-				<td th:text="${bean.memberStatusName}">Formalized</td>
-				<td th:text="${bean.formalizedDate}">2014/11/07</td>
-				<td th:text="${bean.updateDatetime}">2014/11/07</td>
-				<td>
-					<a href="@{/member/edit/${bean.memberId}/}" th:if="not ${bean.withdrawalMember}">Edit</a>
-					<span th:if="${bean.withdrawalMember}">Fixed</span>
-				</td>
-				<!--
-				<td>
-					<c:if test="${bean.purchaseCount > 0}">
-						<s:link href="/member/purchase/list/${f:h(bean.memberId)}/1/">購入履歴</s:link>
-					</c:if>
-				</td>
-				 -->
-			</tr>
-		</tbody>
-	</table>
+	</section>
+
+	<section class="member-result-box">
+		<h3 class="content-title-second">Search Result</h3>
+		<a th:href="@{/member/add/}" href="member_add.html">add Member</a>
+
+		<table  class="list-tbl">
+			<thead>
+				<tr>
+					<th>Member ID</th>
+					<th>Member Name</th>
+					<th>Member Status</th>
+					<th>Formalized Date</th>
+					<th>Update Date</th>
+					<th>Edit</th>
+					<th>Purchase History</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="bean : ${beans}">
+					<td th:text="${bean.memberId}">99</td>
+					<td th:text="${bean.memberName}">jflute</td>
+					<td th:text="${bean.memberStatusName}">Formalized</td>
+					<td th:text="${bean.formalizedDate}">2014/11/07</td>
+					<td th:text="${bean.updateDatetime}">2014/11/07</td>
+					<td>
+						<a href="@{/member/edit/${bean.memberId}/}" th:if="not ${bean.withdrawalMember}">Edit</a>
+						<span th:if="${bean.withdrawalMember}">Fixed</span>
+					</td>
+					<!--
+					<td>
+						<c:if test="${bean.purchaseCount > 0}">
+							<s:link href="/member/purchase/list/${f:h(bean.memberId)}/1/">購入履歴</s:link>
+						</c:if>
+					</td>
+					 -->
+				</tr>
+			</tbody>
+		</table>
+	</section>
 </div>
 
 <footer th:replace="/common/layout :: footer">

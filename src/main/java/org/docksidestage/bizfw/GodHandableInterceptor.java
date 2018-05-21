@@ -43,7 +43,10 @@ public class GodHandableInterceptor extends HandlerInterceptorAdapter {
             logger.debug("#flow ...Beginning #controller " + buildActionDisp(handlerMethod));
         }
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal =
+                SecurityContextHolder.getContext().getAuthentication() != null ? SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getPrincipal() : null;
 
         HeaderBean headerBean = null;
         if (principal instanceof UserDetails) {

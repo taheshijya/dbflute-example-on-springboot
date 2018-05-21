@@ -2,7 +2,9 @@ package org.docksidestage.app.web.member;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
@@ -12,6 +14,7 @@ import org.dbflute.cbean.result.PagingResultBean;
 import org.dbflute.util.DfTypeUtil;
 import org.docksidestage.dbflute.allcommon.CDef;
 import org.docksidestage.dbflute.exbhv.MemberBhv;
+import org.docksidestage.dbflute.exbhv.MemberStatusBhv;
 import org.docksidestage.dbflute.exentity.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,9 @@ public class MemberController {
     @Autowired
     private MemberBhv memberBhv; // #dbflute: you can use DBFlute behaviors like this
 
+    @Autowired
+    private MemberStatusBhv memberStatusBhv;
+
     // ===================================================================================
     //                                                                              Entry
     //                                                                             =======
@@ -62,6 +68,7 @@ public class MemberController {
     @RequestMapping("/list")
     public String list(Model model, @Valid MemberSearchForm form, BindingResult result) {
         logger.debug("#form: {}", form);
+        model.addAttribute("memberStatusSelectOption", getMemberStatusSelectOption());
         if (result.hasErrors()) {
             logger.debug("has error:" + result.getFieldErrors());
             model.addAttribute("beans", Collections.emptyList()); // #for_now avoid error
@@ -75,6 +82,7 @@ public class MemberController {
         }
         PagingResultBean<Member> page = selectMemberPage(form);
         model.addAttribute("beans", convertToResultBeans(page));
+
         return "member/member_list";
     }
 
@@ -87,7 +95,7 @@ public class MemberController {
             }, Member.ALIAS_purchaseCount);
 
             cb.query().setMemberName_LikeSearch(form.getMemberName(), op -> op.likeContain());
-            final String purchaseProductName = form.purchaseProductName;
+            final String purchaseProductName = form.getPurchaseProductName();
             final boolean unpaid = form.unpaid;
             if ((purchaseProductName != null && purchaseProductName.trim().length() > 0) || unpaid) {
                 cb.query().existsPurchase(purchaseCB -> {
@@ -134,4 +142,17 @@ public class MemberController {
     public String add(Model model, @Valid MemberForm memberForm, BindingResult result) throws ParseException, NamingException {
         throw new RuntimeException("not implemented yet");
     }
+
+    protected Map<String, String> getMemberStatusSelectOption() {
+
+        Map<String, String> memberStatusSelectOption = new LinkedHashMap<String, String>();
+        memberStatusBhv.selectList(cb -> {
+            cb.query().addOrderBy_DisplayOrder_Asc();
+        }).forEach(action -> {
+            memberStatusSelectOption.put(action.getMemberStatusCode(), action.getMemberStatusName());
+        });
+
+        return memberStatusSelectOption;
+    }
+
 }

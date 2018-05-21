@@ -18,7 +18,7 @@ package org.docksidestage.app.web.member;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * @author jflute
@@ -33,10 +33,14 @@ public class MemberSearchForm implements Serializable {
     // -----------------------------------------------------
     //                                             Condition
     //                                             ---------
-    @NotEmpty
+    @Length(max = 5)
     private String memberName;
+
     public String memberStatus;
-    public String purchaseProductName;
+
+    @Length(max = 10)
+    private String purchaseProductName;
+
     public boolean unpaid;
     private LocalDate formalizedDateFrom;
     public LocalDate formalizedDateTo;
@@ -78,6 +82,14 @@ public class MemberSearchForm implements Serializable {
 
     public void setMemberStatus(String memberStatus) {
         this.memberStatus = memberStatus;
+    }
+
+    public String getPurchaseProductName() {
+        return purchaseProductName;
+    }
+
+    public void setPurchaseProductName(String purchaseProductName) {
+        this.purchaseProductName = purchaseProductName;
     }
 
     public LocalDate getFormalizedDateFrom() {
