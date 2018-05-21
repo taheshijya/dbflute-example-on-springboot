@@ -38,12 +38,12 @@
 <div class="paging-navi" th:fragment="paging-navi" th:if="${pagingNavi}">
 <!--/*/ <th:block th:if="${pagingNavi.displayPagingNavi}"> /*/-->
 	<span th:text="${pagingNavi.currentPageNumber}">${pagingNavi.currentPageNumber}</span>/<span th:text="${pagingNavi.allPageCount}">${pagingNavi.allPageCount}</span> (<span th:text="${pagingNavi.allRecordCount}">${pagingNavi.allRecordCount}</span>)
-	<a th:if="${pagingNavi.existsPreviousPage}" th:href="${pagingNavi.previousPageLinkHref}">pre</a>
+	<a th:if="${pagingNavi.existPrePage}" th:href="${pagingNavi.prePageLinkHref}">pre</a>
 	<span th:each="link : ${pagingNavi.pageNumberLinkList}" >
 			<span id="pageNumberElement" th:unless="${link.current}"><a th:href="${link.pageNumberLinkHref}" th:text="${link.pageNumberElement}">${link.pageNumberElement}</a></span>
 			<span id="pageNumberElement" th:if="${link.current}" th:text="${link.pageNumberElement}">${link.pageNumberElement}</span>
 	</span>
-	<a th:if="${pagingNavi.existsNextPage}" th:href="${pagingNavi.nextPageLinkHref}">next</a>
+	<a th:if="${pagingNavi.existNextPage}" th:href="${pagingNavi.nextPageLinkHref}">next</a>
 <!--/*/ </th:block> /*/-->
 </div>
 

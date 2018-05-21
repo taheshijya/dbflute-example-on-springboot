@@ -12,6 +12,7 @@ import javax.validation.Valid;
 
 import org.dbflute.cbean.result.PagingResultBean;
 import org.dbflute.util.DfTypeUtil;
+import org.docksidestage.app.web.paging.PagingNavi;
 import org.docksidestage.dbflute.allcommon.CDef;
 import org.docksidestage.dbflute.exbhv.MemberBhv;
 import org.docksidestage.dbflute.exbhv.MemberStatusBhv;
@@ -24,13 +25,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * @author jflute
  */
 @Controller
 @RequestMapping("/member")
+@SessionAttributes(value = "memberSearchForm")
 public class MemberController {
 
     // ===================================================================================
@@ -46,6 +50,12 @@ public class MemberController {
 
     @Autowired
     private MemberStatusBhv memberStatusBhv;
+
+    @ModelAttribute("memberSearchForm")
+    MemberSearchForm memberSearchForm() {
+        System.out.println("create memberSearchForm");
+        return new MemberSearchForm();
+    }
 
     // ===================================================================================
     //                                                                              Entry
@@ -82,6 +92,13 @@ public class MemberController {
         }
         PagingResultBean<Member> page = selectMemberPage(form);
         model.addAttribute("beans", convertToResultBeans(page));
+
+        // ページング用処理
+        PagingNavi pagingNavi = new PagingNavi();
+        pagingNavi.prepare(page, op -> {
+            op.rangeSize(10);
+        });
+        model.addAttribute("pagingNavi", pagingNavi);
 
         return "member/member_list";
     }
