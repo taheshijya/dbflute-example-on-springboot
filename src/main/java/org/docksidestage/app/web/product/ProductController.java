@@ -19,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
@@ -56,14 +59,12 @@ public class ProductController {
     @Transactional
     public String index(Model model, ProductSearchForm productSearchForm) {
 
-        return "index";
+        return "redirect:/product/list";
     }
 
     // ===================================================================================
     //                                                                           Show List
     //                                                                           =========
-    // http://localhost:8080/member/list?pageNumber=1
-    // http://localhost:8080/member/list?pageNumber=sea
     @RequestMapping("/list")
     public String list(Model model, @Valid ProductSearchForm form, BindingResult result) {
         logger.debug("#form: {}", form);
@@ -152,6 +153,43 @@ public class ProductController {
         }
 
         return productStatusSelectOption;
+    }
+
+    @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+    public String detail(@PathVariable int id, ModelMap model) {
+        logger.debug("id=" + id);
+
+        Product product = selectProduct(id);
+        ProductDetailBean bean = mappingToDetailBean(product);
+
+        model.addAttribute("product", bean);
+
+        return "product/product_detail";
+    }
+
+    // ===================================================================================
+    //                                                                              Select
+    //                                                                              ======
+    private Product selectProduct(int productId) {
+        return productBhv.selectEntity(cb -> {
+            cb.setupSelect_ProductCategory();
+            cb.query().setProductId_Equal(productId);
+        }).get();
+    }
+
+    // ===================================================================================
+    //                                                                             Mapping
+    //                                                                             =======
+    private ProductDetailBean mappingToDetailBean(Product product) {
+        ProductDetailBean bean = new ProductDetailBean();
+        bean.productId = product.getProductId();
+        bean.productName = product.getProductName();
+        bean.regularPrice = product.getRegularPrice();
+        bean.productHandleCode = product.getProductHandleCode();
+        product.getProductCategory().alwaysPresent(category -> {
+            bean.categoryName = category.getProductCategoryName();
+        });
+        return bean;
     }
 
 }
