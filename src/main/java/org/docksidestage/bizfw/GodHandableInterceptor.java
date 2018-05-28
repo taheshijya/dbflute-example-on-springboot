@@ -16,10 +16,12 @@
 package org.docksidestage.bizfw;
 
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.dbflute.hook.AccessContext;
 import org.docksidestage.app.application.security.MemberUserDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,18 @@ public class GodHandableInterceptor extends HandlerInterceptorAdapter {
         if (principal instanceof UserDetails) {
             //String username = ((UserDetails) principal).getUsername();
             headerBean = new HeaderBean((MemberUserDetail) principal);
+
+            try {
+                AccessContext context = new AccessContext();
+                context.setAccessLocalDateTime(LocalDateTime.now());
+                context.setAccessUser(headerBean.memberId);
+                context.setAccessProcess(buildActionDisp(handlerMethod));
+                AccessContext.setAccessContextOnThread(context);
+                //return invocation.proceed();
+            } finally {
+                //AccessContext.clearAccessContextOnThread();
+            }
+
         } else {
             //String username = principal.toString();
             headerBean = HeaderBean.empty();

@@ -1,13 +1,14 @@
 package org.docksidestage.app.web.member;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.naming.NamingException;
 import javax.validation.Valid;
 
 import org.dbflute.cbean.result.PagingResultBean;
@@ -20,7 +21,6 @@ import org.docksidestage.dbflute.exentity.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -156,8 +156,23 @@ public class MemberController {
     //                                                                          Add Member
     //                                                                          ==========
     @RequestMapping("/add")
-    public String add(Model model, @Valid MemberForm memberForm, BindingResult result) throws ParseException, NamingException {
-        throw new RuntimeException("not implemented yet");
+    public String add(Model model, MemberAddForm memberAddForm, BindingResult result) {
+        model.addAttribute("memberStatusSelectOption", getMemberStatusSelectOption());
+        return "member/member_add";
+    }
+
+    @RequestMapping("/add/register")
+    public String register(Model model, @Valid MemberAddForm memberAddForm, BindingResult result) {
+        model.addAttribute("memberStatusSelectOption", getMemberStatusSelectOption());
+
+        if (result.hasErrors()) {
+            logger.debug("has error:" + result.getFieldErrors());
+            return "member/member_add";
+        }
+
+        insertMember(memberAddForm);
+
+        return "redirect:/member/list";
     }
 
     protected Map<String, String> getMemberStatusSelectOption() {
@@ -170,6 +185,21 @@ public class MemberController {
         });
 
         return memberStatusSelectOption;
+    }
+
+    // ===================================================================================
+    //                                                                              Update
+    //                                                                              ======
+    private void insertMember(MemberAddForm form) {
+        Member member = new Member();
+        member.setMemberName(form.getMemberName());
+        member.setMemberAccount(form.getMemberAccount());
+        member.setBirthdate(LocalDate.parse(form.getBirthdate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        member.setMemberStatusCodeAsMemberStatus(CDef.MemberStatus.codeOf(form.getMemberStatus()));
+        if (member.isMemberStatusCodeFormalized()) {
+            member.setFormalizedDatetime(LocalDateTime.now());
+        }
+        memberBhv.insert(member);
     }
 
 }
