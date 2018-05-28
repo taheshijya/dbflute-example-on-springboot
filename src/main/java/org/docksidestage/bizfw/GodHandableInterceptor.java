@@ -79,6 +79,9 @@ public class GodHandableInterceptor extends HandlerInterceptorAdapter {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
             throws Exception {
         super.postHandle(request, response, handler, modelAndView);
+
+        AccessContext.clearAccessContextOnThread();
+
         if (logger.isDebugEnabled()) {
             logger.debug("modelAndView: {}", modelAndView != null ? modelAndView.toString() : null);
             final HandlerMethod handlerMethod = (HandlerMethod) handler;
