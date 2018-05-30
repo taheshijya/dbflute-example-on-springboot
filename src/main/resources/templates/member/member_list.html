@@ -105,8 +105,8 @@
 					<td th:text="${bean.formalizedDate}">2014/11/07</td>
 					<td th:text="${bean.updateDatetime}">2014/11/07</td>
 					<td>
-						<a href="@{/member/edit/${bean.memberId}/}" th:if="not ${bean.withdrawalMember}">Edit</a>
-						<span th:if="${bean.withdrawalMember}">Fixed</span>
+						<span th:if="${!bean.withdrawalMember}"><a th:href="@{'/member/edit/' + ${bean.memberId}}">Edit</a></span>
+						<span th:if="${bean.withdrawalMember}">Cannot</span>
 					</td>
 					<!--
 					<td>

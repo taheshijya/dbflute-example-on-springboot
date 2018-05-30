@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -175,6 +176,33 @@ public class MemberController {
         return "redirect:/member/list";
     }
 
+    // ===================================================================================
+    //                                                                          Edit Member
+    //
+    @RequestMapping("/edit/{id}")
+    public String edit(@PathVariable int id, Model model, MemberEditForm memberEditForm, BindingResult result) {
+        model.addAttribute("memberStatusSelectOption", getMemberStatusSelectOption());
+
+        Member member = selectMember(id);
+        mappingToForm(member, memberEditForm);
+
+        return "member/member_edit";
+    }
+
+    @RequestMapping("/update")
+    public String update(Model model, @Valid MemberEditForm memberEditForm, BindingResult result) {
+        model.addAttribute("memberStatusSelectOption", getMemberStatusSelectOption());
+
+        if (result.hasErrors()) {
+            logger.debug("has error:" + result.getFieldErrors());
+            return "member/member_edit";
+        }
+
+        Member member = updateMember(memberEditForm);
+
+        return "redirect:/member/edit/" + member.getMemberId();
+    }
+
     protected Map<String, String> getMemberStatusSelectOption() {
 
         Map<String, String> memberStatusSelectOption = new LinkedHashMap<String, String>();
@@ -188,7 +216,7 @@ public class MemberController {
     }
 
     // ===================================================================================
-    //                                                                              Update
+    //                                                                              insert
     //                                                                              ======
     private void insertMember(MemberAddForm form) {
         Member member = new Member();
@@ -202,4 +230,59 @@ public class MemberController {
         memberBhv.insert(member);
     }
 
+    // ===================================================================================
+    //                                                                             Mapping
+    //                                                                             =======
+    private void mappingToForm(Member member, MemberEditForm form) {
+        form.setMemberId(member.getMemberId());
+        form.setMemberName(member.getMemberName());
+        form.setMemberAccount(member.getMemberAccount());
+        form.setMemberStatus(member.getMemberStatusCode());
+        form.setBirthdate(member.getBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
+        if (formalizedDatetime != null) {
+            form.setFormalizedDate(formalizedDatetime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        }
+        if (member.getLatestLoginDatetime() != null) {
+            form.setLatestLoginDatetime(member.getLatestLoginDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        }
+        form.setUpdateDatetime(member.getUpdateDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        form.setPreviousStatus(member.getMemberStatusCode()); // to determine new formalized member
+        form.setVersionNo(member.getVersionNo());
+    }
+
+    // ===================================================================================
+    //                                                                              Update
+    //                                                                              ======
+    private Member updateMember(MemberEditForm form) {
+        Member member = new Member();
+        member.setMemberId(form.getMemberId());
+        member.setMemberName(form.getMemberName());
+        member.setBirthdate(LocalDate.parse(form.getBirthdate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))); // may be updated as null
+        member.setMemberStatusCodeAsMemberStatus(CDef.MemberStatus.codeOf(form.getMemberStatus()));
+        member.setMemberAccount(form.getMemberAccount());
+        if (member.isMemberStatusCodeFormalized()) {
+            if (CDef.MemberStatus.codeOf(form.getPreviousStatus()).isShortOfFormalized()) {
+                member.setFormalizedDatetime(LocalDateTime.now());
+            }
+        } else if (member.isMemberStatusCode_ShortOfFormalized()) {
+            member.setFormalizedDatetime(null);
+        }
+        member.setVersionNo(form.getVersionNo());
+        memberBhv.update(member);
+        return member;
+    }
+
+    // ===================================================================================
+    //                                                                              Select
+    //                                                                              ======
+    private Member selectMember(Integer memberId) {
+        return memberBhv.selectEntity(cb -> {
+            cb.specify().derivedMemberLogin().max(loginCB -> {
+                loginCB.specify().columnLoginDatetime();
+            }, Member.ALIAS_latestLoginDatetime);
+            cb.query().setMemberId_Equal(memberId);
+            cb.query().setMemberStatusCode_InScope_ServiceAvailable();
+        }).get(); // automatically exclusive controlled if not found
+    }
 }

@@ -15,6 +15,8 @@
  */
 package org.docksidestage.dbflute.exentity;
 
+import java.time.LocalDateTime;
+
 import org.docksidestage.dbflute.bsentity.BsMember;
 
 /**
@@ -32,8 +34,15 @@ public class Member extends BsMember {
     private static final long serialVersionUID = 1L;
     /** PURCHASE_COUNT: Derived Referrer Alias. */
     public static final String ALIAS_purchaseCount = "PURCHASE_COUNT";
+
+    /** LATEST_LOGIN_DATETIME: Derived Referrer Alias. */
+    public static final String ALIAS_latestLoginDatetime = "LATEST_LOGIN_DATETIME";
+
     /** PURCHASE_COUNT: (Derived Referrer) */
     protected Integer _purchaseCount;
+
+    /** LATEST_LOGIN_DATETIME: (Derived Referrer) */
+    protected LocalDateTime _latestLoginDatetime;
 
     /**
      * [get] PURCHASE_COUNT: (Derived Referrer)
@@ -49,5 +58,21 @@ public class Member extends BsMember {
      */
     public void setPurchaseCount(Integer purchaseCount) {
         _purchaseCount = purchaseCount;
+    }
+
+    /**
+     * [get] LATEST_LOGIN_DATETIME: (Derived Referrer)
+     * @return The value of the column 'LATEST_LOGIN_DATETIME'. (NullAllowed)
+     */
+    public LocalDateTime getLatestLoginDatetime() {
+        return _latestLoginDatetime;
+    }
+
+    /**
+     * [set] LATEST_LOGIN_DATETIME: (Derived Referrer)
+     * @param latestLoginDatetime The value of the column 'LATEST_LOGIN_DATETIME'. (NullAllowed)
+     */
+    public void setLatestLoginDatetime(LocalDateTime latestLoginDatetime) {
+        _latestLoginDatetime = latestLoginDatetime;
     }
 }
