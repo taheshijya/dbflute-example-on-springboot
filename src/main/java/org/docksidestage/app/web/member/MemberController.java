@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 import org.dbflute.cbean.result.PagingResultBean;
 import org.dbflute.util.DfTypeUtil;
-import org.docksidestage.app.web.paging.PagingNavi;
+import org.docksidestage.bizfw.PagingNavi;
 import org.docksidestage.dbflute.allcommon.CDef;
 import org.docksidestage.dbflute.exbhv.MemberBhv;
 import org.docksidestage.dbflute.exbhv.MemberStatusBhv;
@@ -238,7 +238,9 @@ public class MemberController {
         form.setMemberName(member.getMemberName());
         form.setMemberAccount(member.getMemberAccount());
         form.setMemberStatus(member.getMemberStatusCode());
-        form.setBirthdate(member.getBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        if (member.getBirthdate() != null) {
+            form.setBirthdate(member.getBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        }
         LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
         if (formalizedDatetime != null) {
             form.setFormalizedDate(formalizedDatetime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
@@ -258,7 +260,9 @@ public class MemberController {
         Member member = new Member();
         member.setMemberId(form.getMemberId());
         member.setMemberName(form.getMemberName());
-        member.setBirthdate(LocalDate.parse(form.getBirthdate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))); // may be updated as null
+        if (form.getBirthdate() != null && !form.getBirthdate().isEmpty()) {
+            member.setBirthdate(LocalDate.parse(form.getBirthdate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))); // may be updated as null
+        }
         member.setMemberStatusCodeAsMemberStatus(CDef.MemberStatus.codeOf(form.getMemberStatus()));
         member.setMemberAccount(form.getMemberAccount());
         if (member.isMemberStatusCodeFormalized()) {
