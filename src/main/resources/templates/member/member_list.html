@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<!--/*/ <th:block th:include="/common/layout :: head (title=#{labels.signin.title})"> /*/-->
+<!--/*/ <th:block th:include="common/layout :: head (title=#{labels.signin.title})"> /*/-->
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="../../../css/reset.css" />
 	<link rel="stylesheet" type="text/css" href="../../../css/common.css" />
@@ -13,7 +13,7 @@
 
 <body>
 
-<header th:replace="/common/layout :: header">
+<header th:replace="common/layout :: header">
 	<section class="nav-main cf">
 		<div class="wrap">
 			<h1 class="main-title"><a href="#">Harbor<span> (SpringFlute Example)</span></a></h1>
@@ -119,13 +119,13 @@
 			</tbody>
 		</table>
 		<section class="product-list-paging-box">
-			<div th:replace="/common/layout :: paging-navi (pagingNavi=${pagingNavi})">
+			<div th:replace="common/layout :: paging-navi (pagingNavi=${pagingNavi})">
 			</div>
 		</section>
 	</section>
 </div>
 
-<footer th:replace="/common/layout :: footer">
+<footer th:replace="common/layout :: footer">
 	<div class="wrap">
 		<ul class="footer-link">
 			<li><a href="http://dbflute.seasar.org/">DBFlute Top</a></li>
@@ -133,7 +133,7 @@
 		<p class="copyright">&copy; SpringFlute project</p>
 	</div>
 </footer>
-<!--/*/ <th:block th:include="/common/layout :: afterScript"> /*/-->
+<!--/*/ <th:block th:include="common/layout :: afterScript"> /*/-->
 <!-- script contents -->
 <script src="../../../js/jquery-2.1.3.min.js" ></script>
 <script src="../../../js/common.js" ></script>
