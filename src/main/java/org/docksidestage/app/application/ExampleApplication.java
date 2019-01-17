@@ -18,6 +18,8 @@ package org.docksidestage.app.application;
 import org.docksidestage.dbflute.allcommon.DBFluteBeansJavaConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
@@ -27,9 +29,15 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @ComponentScan("org.docksidestage.app")
 @Import(DBFluteBeansJavaConfig.class)
-public class ExampleApplication { // #dbflute: import JavaConfig of DBFlute
+public class ExampleApplication extends SpringBootServletInitializer { //  #dbflute: import JavaConfig of DBFlute
 
     public static void main(String[] args) {
         SpringApplication.run(ExampleApplication.class, args);
+    }
+
+    // warパッケージ時はSpringBootServletInitializerを継承し以下を追加
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(ExampleApplication.class);
     }
 }
