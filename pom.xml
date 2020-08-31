@@ -155,6 +155,11 @@
 	</build>
 
 	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven2 Central Repository</name>
+			<url>https://repo1.maven.org/maven2/</url>
+		</repository>
 		<!-- for dbflute snapshot -->
 		<repository>
 			<id>sonatype-oss-public</id>
@@ -170,12 +175,32 @@
 	    <repository>
 	        <id>spring-milestones</id>
 	        <name>Spring Milestones</name>
-	        <url>http://repo.spring.io/milestone</url>
+	        <url>https://repo.spring.io/milestone</url>
 	        <snapshots>
 	            <enabled>false</enabled>
 	        </snapshots>
 	    </repository>
 	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
+			<id>mave.seaser.org</id>
+			<name>The Seasar Foundation Maven2 Repository</name>
+			<url>https://maven.seasar.org/maven2</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>snapshot.mave.seaser.org</id>
+			<name>The Seasar Foundation Maven2 Repository</name>
+			<url>https://maven.seasar.org/maven2-snapshot</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<dependencies>
 		<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
